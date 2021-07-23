@@ -14,13 +14,36 @@ test('language bindings', async () => {
       first: { type: 'string' },
       middle: { type: 'string' },
       last: { type: 'string' },
+      objectWithTypedAdditionalPropertiesOnly: {
+        type: 'object',
+        additionalProperties: {
+          type: 'string',
+        },
+      },
+      objectWithPropertiesAndBooleanAdditionalProperties: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+        additionalProperties: {},
+      },
+      objectWithPropertiesAndTypedAdditionalProperties: {
+        type: 'object',
+        properties: {
+          name: { type: 'string' },
+        },
+        additionalProperties: {
+          type: 'string',
+        },
+      },
     },
+    additionalProperties: true,
     required: ['first', 'last'],
   });
 
   const workdir = fs.mkdtempSync(path.join(os.tmpdir(), 'json2jsii'));
 
-  const src = path.join(workdir, 'tyepscript');
+  const src = path.join(workdir, 'typescript');
   fs.mkdirSync(src);
   fs.writeFileSync(path.join(src, 'index.ts'), await g.render());
 
@@ -33,10 +56,22 @@ test('language bindings', async () => {
       outdir: path.join(workdir, 'python'),
       moduleName: 'myorg',
     },
+    golang: {
+      outdir: path.join(workdir, 'golang'),
+      packageName: 'myorg',
+      moduleName: 'myorg',
+    },
+    csharp: {
+      outdir: path.join(workdir, 'csharp'),
+      namespace: 'myorg',
+    },
   });
 
+  expect(readFile(path.join(workdir, 'typescript/index.ts'))).toMatchSnapshot();
   expect(readFile(path.join(workdir, 'python/myorg/__init__.py'))).toMatchSnapshot();
   expect(readFile(path.join(workdir, 'java/src/main/java/org/myorg/Name.java'), ['@javax.annotation.Generated'])).toMatchSnapshot();
+  expect(readFile(path.join(workdir, 'golang/myorg/myorg.go'))).toMatchSnapshot();
+  expect(readFile(path.join(workdir, 'csharp/myorg/myorg/Name.cs'))).toMatchSnapshot();
 });
 
 function readFile(filePath: string, ignoreLines: string[] = []) {

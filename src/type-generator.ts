@@ -378,13 +378,28 @@ export class TypeGenerator {
         this.emitProperty(code, propName, propSpec, structFqn, structDef, toJson);
       }
 
+      if (structDef.additionalProperties) {
+        if (structDef.additionalProperties === true) {
+          code.line('[key: string]: any;');
+        } else if (typeof(structDef.additionalProperties) === 'object') {
+          let propertyType = 'any';
+          if (Object.keys(structDef.additionalProperties).length > 0) {
+            const emittedType = this.typeForProperty(typeName, structDef.additionalProperties);
+            propertyType = emittedType.type;
+            if (propertyType !== 'any') {
+              // Other properties might be optional
+              propertyType = `${propertyType} | undefined`;
+            }
+          }
+          code.line(`[key: string]: ${propertyType};`);
+        }
+      }
+
       code.closeBlock();
 
       if (this.toJson) {
         toJson.emit(code);
       }
-
-      return emitted;
     });
 
     return emitted;

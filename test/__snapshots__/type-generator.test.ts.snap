@@ -778,6 +778,11 @@ export interface TestType {
   readonly mapShouldBeOptional?: { [key: string]: ItemType };
 
   /**
+   * @schema fqn.of.TestType#shouldAllowAdditionalProperties
+   */
+  readonly shouldAllowAdditionalProperties?: FqnOfTestTypeShouldAllowAdditionalProperties;
+
+  /**
    * @schema fqn.of.TestType#arrayShouldBeOptional
    */
   readonly arrayShouldBeOptional?: ItemType[];
@@ -793,6 +798,7 @@ export function toJson_TestType(obj: TestType | undefined): Record<string, any> 
   const result = {
     'shouldBeRequired': toJson_ItemType(obj.shouldBeRequired),
     'mapShouldBeOptional': ((obj.mapShouldBeOptional) === undefined) ? undefined : (Object.entries(obj.mapShouldBeOptional).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: toJson_ItemType(i[1]) }), {})),
+    'shouldAllowAdditionalProperties': toJson_FqnOfTestTypeShouldAllowAdditionalProperties(obj.shouldAllowAdditionalProperties),
     'arrayShouldBeOptional': obj.arrayShouldBeOptional?.map(y => toJson_ItemType(y)),
   };
   // filter undefined values
@@ -819,6 +825,32 @@ export function toJson_ItemType(obj: ItemType | undefined): Record<string, any> 
   if (obj === undefined) { return undefined; }
   const result = {
     'requiredField': obj.requiredField,
+  };
+  // filter undefined values
+  return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
+}
+/* eslint-enable max-len, quote-props */
+
+/**
+ * @schema FqnOfTestTypeShouldAllowAdditionalProperties
+ */
+export interface FqnOfTestTypeShouldAllowAdditionalProperties {
+  /**
+   * @schema FqnOfTestTypeShouldAllowAdditionalProperties#someProperty
+   */
+  readonly someProperty?: ItemType;
+
+  [key: string]: any;
+}
+
+/**
+ * Converts an object of type 'FqnOfTestTypeShouldAllowAdditionalProperties' to JSON representation.
+ */
+/* eslint-disable max-len, quote-props */
+export function toJson_FqnOfTestTypeShouldAllowAdditionalProperties(obj: FqnOfTestTypeShouldAllowAdditionalProperties | undefined): Record<string, any> | undefined {
+  if (obj === undefined) { return undefined; }
+  const result = {
+    'someProperty': obj.someProperty,
   };
   // filter undefined values
   return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
@@ -858,7 +890,7 @@ export function toJson_TestType(obj: TestType | undefined): Record<string, any> 
  */
 export interface Other {
   /**
-   * @schema Other#stringValue
+   * @schema Other#StringValue
    */
   readonly stringValue: string;
 
@@ -871,7 +903,7 @@ export interface Other {
 export function toJson_Other(obj: Other | undefined): Record<string, any> | undefined {
   if (obj === undefined) { return undefined; }
   const result = {
-    'stringValue': obj.stringValue,
+    'StringValue': obj.stringValue,
   };
   // filter undefined values
   return Object.entries(result).reduce((r, i) => (i[1] === undefined) ? r : ({ ...r, [i[0]]: i[1] }), {});
